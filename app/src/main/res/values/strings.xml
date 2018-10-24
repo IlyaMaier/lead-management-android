@@ -73,7 +73,7 @@
     <string name="google_title_text">Google Sign In</string>
 
     <string name="phone_title_text">Phone Number</string>
-    <string name="about">Lead-Management is the app to store your contacts in a comfortable way. You can make groups of contacts, eg. family. You can also use a night mode. This app is currently in development, which means that in the future, many more features will be added. \n\nGitHub repository link: \nhttps://github.com/JBossOutreach/lead-management-android</string>
+    <string name="about">Lead-Management is the app to store your contacts in a comfortable way. You can make groups of your contacts. You can also use a night mode. This app is currently in development, which means that in the future, many more features will be added. \n\nGitHub repository link: \nhttps://github.com/JBossOutreach/lead-management-android</string>
     <string name="logo_of_the_app">logo of the app</string>
 
 </resources>
