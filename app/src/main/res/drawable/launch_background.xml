@@ -1,15 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<animation-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <item
-        android:drawable="@drawable/ic_phone"
-        android:duration="700" />
-    <item
-        android:drawable="@drawable/ic_phone_paused"
-        android:duration="700" />
-    <item
-        android:drawable="@drawable/ic_phone_missed"
-        android:duration="700" />
-    <item
-        android:drawable="@drawable/ic_sms"
-        android:duration="700" />
-</animation-list>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:drawable="@color/white" />
+
+    <item>
+        <bitmap
+            android:gravity="center"
+            android:src="@drawable/ic_sms" />
+    </item>
+
+</layer-list>
