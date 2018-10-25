@@ -1,21 +1,20 @@
-<android.support.v7.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<android.support.v7.preference.PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <android.support.v7.preference.PreferenceCategory android:title="Category 1">
+    <android.support.v7.preference.PreferenceCategory
+        android:title="Category 1">
         <android.support.v7.preference.EditTextPreference
-            android:defaultValue="Default value"
-            android:dialogMessage="change server location using this entry box."
             android:key="server_location"
+            android:title="Server Location"
             android:summary="current location"
-            android:title="Server Location" />
+            android:dialogMessage="change server location using this entry box."
+            android:defaultValue="Default value"/>
 
         <SwitchPreference
-            android:defaultValue="false"
             android:key="dark_theme"
-            android:title="Toggle mode" />
-
-        <Preference
-            android:key="sign_out"
-            android:title="Sign Out" />
+            android:title="Toggle mode"
+            android:defaultValue="false"
+            />
 
     </android.support.v7.preference.PreferenceCategory>
 
