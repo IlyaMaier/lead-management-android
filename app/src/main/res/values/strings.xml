@@ -19,7 +19,10 @@
     <string name="title_groups">Groups</string>
     <string name="name">Name</string>
     <string name="phone">Phone</string>
-
+    <string name="email">Email</string>
+    <string name="query">Query</string>
+    <string name="address">Address</string>
+    <string name="notes">Notes</string>
 
     <string name="title_add_contact">Add Contact</string>
     <string name="title_edit_contact">Edit Contact</string>
@@ -36,7 +39,6 @@
     <string name="import_contacts">Import contacts</string>
     
     <string name="no_results">No results found</string>
-    <string name="email">Email</string>
     <string name="mobile">Mobile</string>
 
     <string name="hint_user_id">User ID</string>

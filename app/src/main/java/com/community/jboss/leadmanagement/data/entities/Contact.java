@@ -12,9 +12,15 @@ import java.util.UUID;
  */
 @Entity
 public class Contact {
-    @PrimaryKey @NonNull
+    @PrimaryKey
+    @NonNull
     private final String id;
     private String name;
+    private String email;
+    private String query;
+    private String address;
+    private String notes;
+    private byte[] photo;
 
     @Ignore
     public Contact(String name) {
@@ -37,5 +43,45 @@ public class Contact {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getQuery() {
+        return query;
+    }
+
+    public void setQuery(String query) {
+        this.query = query;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
+    }
+
+    public byte[] getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(byte[] photo) {
+        this.photo = photo;
     }
 }
