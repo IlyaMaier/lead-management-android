@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
+import android.widget.Toast;
 
 import com.community.jboss.leadmanagement.main.contacts.editcontact.EditContactActivity;
 
@@ -39,11 +40,12 @@ public class CallReceiver extends BroadcastReceiver {
         this.number = callerNum;
 
         if (state.equals(TelephonyManager.EXTRA_STATE_RINGING)) {
-            showNotification();
+            showNotification(false);
         } else if (state.equals(TelephonyManager.EXTRA_STATE_IDLE)) {
             hideNotification();
+            showNotification(true);
         } else if (state.equals(TelephonyManager.EXTRA_STATE_OFFHOOK)) {
-            showNotification();
+            showNotification(false);
         }
     }
 
@@ -55,7 +57,7 @@ public class CallReceiver extends BroadcastReceiver {
         }
     }
 
-    private void showNotification() {
+    private void showNotification(boolean afterCall) {
 
         final Intent notificationIntent = new Intent(mContext, EditContactActivity.class);
         String CHANNEL_ID = "lead-management-ch";
@@ -66,13 +68,25 @@ public class CallReceiver extends BroadcastReceiver {
         final PendingIntent contentIntent = PendingIntent.getActivity(mContext, 0,
                 notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        final NotificationCompat.Builder notification = new NotificationCompat.Builder(mContext)
-                .setSmallIcon(R.drawable.ic_call_black_24dp)
-                .setContentTitle("Call in Progress")
-                .setTicker("Lead Management")
-                .setContentIntent(contentIntent)
-                .setContentText("Number: " + number)
-                .setChannelId(CHANNEL_ID);
+        final NotificationCompat.Builder notification;
+
+        if (!afterCall)
+            notification = new NotificationCompat.Builder(mContext)
+                    .setSmallIcon(R.drawable.ic_call_black_24dp)
+                    .setContentTitle("Call in Progress")
+                    .setTicker("Lead Management")
+                    .setContentIntent(contentIntent)
+                    .setContentText("Number: " + number)
+                    .setChannelId(CHANNEL_ID);
+        else
+            notification = new NotificationCompat.Builder(mContext)
+                    .setSmallIcon(R.drawable.ic_call_black_24dp)
+                    .setContentTitle("Do you want to save what you discussed with this Client?")
+                    .addAction(0, "Yes", contentIntent)
+                    .setTicker("Lead Management")
+                    .setContentIntent(contentIntent)
+                    .setContentText("Number: " + number)
+                    .setChannelId(CHANNEL_ID);
 
         final NotificationManager manager =
                 (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
