@@ -47,6 +47,21 @@
             </intent-filter>
         </receiver>
 
+        <receiver
+            android:name=".Widget"
+            android:icon="@drawable/ic_logo_launch"
+            android:label="Create contact">
+            <intent-filter>
+                <action
+                    android:name="android.appwidget.action.APPWIDGET_UPDATE">
+                </action>
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_metadata">
+            </meta-data>
+        </receiver>
+
         <activity
             android:name=".SettingsActivity"
             android:parentActivityName=".main.MainActivity"
