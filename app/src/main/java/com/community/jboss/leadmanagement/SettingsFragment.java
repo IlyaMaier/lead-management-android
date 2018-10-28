@@ -1,6 +1,5 @@
 package com.community.jboss.leadmanagement;
 
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -14,18 +13,14 @@ import android.support.v7.preference.PreferenceFragmentCompat;
 
 import com.community.jboss.leadmanagement.main.MainActivity;
 
-
 /**
  * A simple {@link Fragment} subclass.
  */
 public class SettingsFragment extends PreferenceFragmentCompat {
 
-
     public SettingsFragment() {
         // Required empty public constructor
     }
-
-
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
