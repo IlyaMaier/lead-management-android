@@ -33,7 +33,6 @@
         <activity
             android:name=".main.contacts.editcontact.EditContactActivity"
             android:theme="@style/Theme.Design.Light.NoActionBar" />
-            android:theme="@style/Theme.Design.Light.NoActionBar"></activity>
 
         <receiver
             android:name=".CallReceiver"
