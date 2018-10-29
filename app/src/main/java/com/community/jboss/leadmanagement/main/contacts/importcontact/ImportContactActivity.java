@@ -12,6 +12,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.community.jboss.leadmanagement.R;
 import com.community.jboss.leadmanagement.data.daos.ContactDao;
@@ -96,8 +97,9 @@ public class ImportContactActivity extends AppCompatActivity {
 
         Cursor people = getContentResolver().query(uri, projection, null, null, null);
 
-        int indexName = people.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
-        int indexNumber = people.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
+        try {
+            int indexName = people.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
+            int indexNumber = people.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
 
         List<ImportContact> contacts = new ArrayList<>();
 
@@ -114,9 +116,14 @@ public class ImportContactActivity extends AppCompatActivity {
                     contacts.add(contact);
                 }
             } while (people.moveToNext());
+            people.close();
+            return contacts;
         }
-        people.close();
-        return contacts;
+        } catch (NullPointerException e){
+            Toast.makeText(this, "Something went wrong.", Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        }
+        return null;
     }
 
 

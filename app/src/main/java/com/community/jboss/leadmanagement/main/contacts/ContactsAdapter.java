@@ -19,6 +19,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.graphics.Color;
+import android.widget.Toast;
 
 import static com.community.jboss.leadmanagement.SettingsActivity.PREF_DARK_THEME;
 
@@ -37,14 +38,13 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-
 public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHolder> implements Filterable {
     private List<Contact> mContacts;
     private ContactsAdapter mAdapter;
     public AdapterListener mListener;
     private List<Contact> spareData;
 
-    public ContactsAdapter(AdapterListener listener) {
+    ContactsAdapter(AdapterListener listener) {
         mListener = listener;
         mAdapter = this;
         mContacts = new ArrayList<>();
@@ -69,7 +69,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
         return mContacts.size();
     }
 
-    public void replaceData(List<Contact> contacts) {
+    void replaceData(List<Contact> contacts) {
         mContacts = contacts;
         spareData = contacts;
         notifyDataSetChanged();
@@ -105,8 +105,13 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
 
             @Override
             protected void publishResults(CharSequence constraint, FilterResults results) {
-                mContacts = (ArrayList<Contact>) results.values;
-                notifyDataSetChanged();
+                try {
+                    mContacts = (ArrayList<Contact>) results.values;
+                    notifyDataSetChanged();
+                }catch (Exception e){
+                    Toast.makeText(mContext, "Contacts are not updated.", Toast.LENGTH_SHORT).show();
+                    e.printStackTrace();
+                }
             }
         };
     }
@@ -207,40 +212,27 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
 
             txtClose.setOnClickListener(view1 -> detailDialog.dismiss());
 
-            btnEdit.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    final Intent intent = new Intent(context, EditContactActivity.class);
-                    intent.putExtra(EditContactActivity.INTENT_EXTRA_CONTACT_NUM, number.getText().toString());
+            btnEdit.setOnClickListener(view12 -> {
+                final Intent intent = new Intent(context, EditContactActivity.class);
+                intent.putExtra(EditContactActivity.INTENT_EXTRA_CONTACT_NUM, number.getText().toString());
+                context.startActivity(intent);
+            });
+
+
+            btnCall.setOnClickListener(view13 -> {
+                if(permManager.permissionStatus(Manifest.permission.CALL_PHONE)) {
+                    Intent intent = new Intent(Intent.ACTION_CALL);
+                    intent.setData(Uri.parse("tel:" + number.getText().toString()));
                     context.startActivity(intent);
+                }else{
+                    permManager.requestPermission(58,Manifest.permission.CALL_PHONE);
                 }
             });
 
-
-            btnCall.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if(permManager.permissionStatus(Manifest.permission.CALL_PHONE)) {
-                        Intent intent = new Intent(Intent.ACTION_CALL);
-                        intent.setData(Uri.parse("tel:" + number.getText().toString()));
-                        context.startActivity(intent);
-                    }else{
-                        permManager.requestPermission(58,Manifest.permission.CALL_PHONE);
-                    }
-                }
-            });
-
-            btnMsg.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("sms:"
-                            + number.getText().toString())));
-                }
-            });
+            btnMsg.setOnClickListener(view14 -> context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("sms:"
+                    + number.getText().toString()))));
 
             detailDialog.show();
-
-
 
         }
 
@@ -258,7 +250,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
         }
     }
 
-    public int getDataSize(){
+    int getDataSize(){
         return mContacts.size();
     }
 }

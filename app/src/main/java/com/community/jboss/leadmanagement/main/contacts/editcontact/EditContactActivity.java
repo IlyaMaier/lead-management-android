@@ -8,9 +8,11 @@ import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.community.jboss.leadmanagement.R;
 import com.community.jboss.leadmanagement.data.entities.ContactNumber;
@@ -31,7 +33,6 @@ public class EditContactActivity extends AppCompatActivity {
     EditText contactNumberField;
 
     private EditContactActivityViewModel mViewModel;
-
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -66,19 +67,27 @@ public class EditContactActivity extends AppCompatActivity {
         });
 
         final Intent intent = getIntent();
-        final String number = intent.getStringExtra(INTENT_EXTRA_CONTACT_NUM);
-        if(mViewModel.getContactNumberByNumber(number)!=null){
-            mViewModel.setContact(mViewModel.getContactNumberByNumber(number).getContactId());
-        }else{
-            mViewModel.setContact(null);
-            contactNumberField.setText(number);
+        String TAG = "EditContactActivity";
+        if(intent!=null) {
+            final String number = intent.getStringExtra(INTENT_EXTRA_CONTACT_NUM);
+            if (mViewModel.getContactNumberByNumber(number) != null) {
+                mViewModel.setContact(mViewModel.getContactNumberByNumber(number).getContactId());
+            } else {
+                mViewModel.setContact(null);
+                contactNumberField.setText(number);
+            }
+        } else{
+            Toast.makeText(this, "Something went wrong.", Toast.LENGTH_SHORT).show();
+            Log.d(TAG, "onCreate: intent is null");
         }
-
         toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_close_black_24dp));
         setSupportActionBar(toolbar);
         final ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
+        }else{
+            Toast.makeText(this, "Something went wrong.", Toast.LENGTH_SHORT).show();
+            Log.d(TAG, "onCreate: actionbar is null");
         }
     }
 

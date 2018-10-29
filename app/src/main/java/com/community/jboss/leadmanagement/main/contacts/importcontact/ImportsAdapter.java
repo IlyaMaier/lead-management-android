@@ -15,12 +15,9 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-
-
 public class ImportsAdapter extends RecyclerView.Adapter<ImportsAdapter.ViewHolder> {
     private List<ImportContact> mDataset;
-    List<ImportContact> contactsToImport = new ArrayList<>();
-
+    private List<ImportContact> contactsToImport = new ArrayList<>();
 
     final class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         @BindView(R.id.impContactImg)
@@ -59,7 +56,6 @@ public class ImportsAdapter extends RecyclerView.Adapter<ImportsAdapter.ViewHold
         }
     }
 
-
     ImportsAdapter(List<ImportContact> myDataset) {
         mDataset = myDataset;
     }
@@ -71,7 +67,6 @@ public class ImportsAdapter extends RecyclerView.Adapter<ImportsAdapter.ViewHold
         return new ViewHolder(v);
     }
 
-
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         holder.bind(mDataset.get(position));
@@ -82,7 +77,7 @@ public class ImportsAdapter extends RecyclerView.Adapter<ImportsAdapter.ViewHold
         return mDataset.size();
     }
 
-    public List<ImportContact> getContactsToImport(){
+    List<ImportContact> getContactsToImport(){
         return this.contactsToImport;
     }
 }

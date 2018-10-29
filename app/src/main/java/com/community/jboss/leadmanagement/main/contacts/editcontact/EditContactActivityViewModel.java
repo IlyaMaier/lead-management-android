@@ -6,6 +6,8 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.util.Log;
+import android.widget.Toast;
 
 import com.community.jboss.leadmanagement.data.daos.ContactDao;
 import com.community.jboss.leadmanagement.data.daos.ContactNumberDao;
@@ -28,7 +30,7 @@ public class EditContactActivityViewModel extends AndroidViewModel {
         mContactNumbers = new MutableLiveData<>();
     }
 
-    public boolean isNewContact() {
+    boolean isNewContact() {
         return mIsNewContact;
     }
 
@@ -40,13 +42,18 @@ public class EditContactActivityViewModel extends AndroidViewModel {
         final Context context = getApplication();
 
         final ContactDao contactDao = DbUtil.contactDao(context);
-        Contact contact = contactDao.getContact(contactId);
-        if (contact == null) {
-            contact = new Contact(null);
-            mIsNewContact = true;
+        if (contactDao != null) {
+            Contact contact = contactDao.getContact(contactId);
+            if (contact == null) {
+                contact = new Contact(null);
+                mIsNewContact = true;
+            }
+            mContact.setValue(contact);
+        } else {
+            Toast.makeText(context, "Something went wrong.", Toast.LENGTH_SHORT).show();
+            String TAG = "EditContactViewModel";
+            Log.d(TAG, "setContact: contactcDao is null");
         }
-        mContact.setValue(contact);
-
         final ContactNumberDao contactNumberDao = DbUtil.contactNumberDao(context);
         List<ContactNumber> contactNumbers = contactNumberDao.getContactNumbers(contactId);
         if (contactNumbers == null) {
@@ -55,16 +62,16 @@ public class EditContactActivityViewModel extends AndroidViewModel {
         mContactNumbers.setValue(contactNumbers);
     }
 
-    public LiveData<List<ContactNumber>> getContactNumbers() {
+    LiveData<List<ContactNumber>> getContactNumbers() {
         return mContactNumbers;
     }
 
-    public ContactNumber getContactNumberByNumber(String number){
+    ContactNumber getContactNumberByNumber(String number) {
         final ContactNumberDao contactNumberDao = DbUtil.contactNumberDao(getApplication());
         return contactNumberDao.getContactNumber(number);
     }
 
-    public void saveContact(String name) {
+    void saveContact(String name) {
         final ContactDao dao = DbUtil.contactDao(getApplication());
 
         Contact contact = mContact.getValue();
@@ -81,9 +88,15 @@ public class EditContactActivityViewModel extends AndroidViewModel {
         }
     }
 
-    public void saveContactNumber(String number) {
+    void saveContactNumber(String number) {
         final ContactNumberDao dao = DbUtil.contactNumberDao(getApplication());
-        final String contactId = mContact.getValue().getId();
+        String contactId = "";
+        try {
+             contactId = mContact.getValue().getId();
+        } catch (NullPointerException e) {
+            Toast.makeText(getApplication(), "Something went wrong.", Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        }
         final List<ContactNumber> contactNumbers = mContactNumbers.getValue();
 
         ContactNumber contactNumber;

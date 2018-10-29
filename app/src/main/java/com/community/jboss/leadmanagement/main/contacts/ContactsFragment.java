@@ -1,11 +1,9 @@
 package com.community.jboss.leadmanagement.main.contacts;
 
-import android.animation.LayoutTransition;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.ActionBar;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -46,9 +44,7 @@ public class ContactsFragment extends MainFragment implements ContactsAdapter.Ad
         mUnbinder = ButterKnife.bind(this, view);
 
         mViewModel = ViewModelProviders.of(this).get(ContactsFragmentViewModel.class);
-        mViewModel.getContacts().observe(this, contacts -> {
-            mAdapter.replaceData(contacts);
-        });
+        mViewModel.getContacts().observe(this, contacts -> mAdapter.replaceData(contacts));
 
         final MainActivity activity = (MainActivity) getActivity();
         if (activity != null) {

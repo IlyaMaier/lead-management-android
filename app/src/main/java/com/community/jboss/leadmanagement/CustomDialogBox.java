@@ -1,5 +1,6 @@
 package com.community.jboss.leadmanagement;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.SharedPreferences;
@@ -14,12 +15,10 @@ import android.widget.TextView;
 
 import com.community.jboss.leadmanagement.data.entities.Contact;
 import com.community.jboss.leadmanagement.main.contacts.ContactsAdapter;
-import com.community.jboss.leadmanagement.utils.DbUtil;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-
 
 public class CustomDialogBox{
 
@@ -40,7 +39,7 @@ public class CustomDialogBox{
     public void showAlert(Activity activity, final Contact contact, ContactsAdapter adapter){
         final Dialog dialog = new Dialog(activity);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        View view = LayoutInflater.from(dialog.getContext()).inflate(R.layout.custom_dialog_box,null,false);
+        @SuppressLint("InflateParams") View view = LayoutInflater.from(dialog.getContext()).inflate(R.layout.custom_dialog_box,null,false);
         ButterKnife.bind(this,view);
         SharedPreferences mPref = PreferenceManager.getDefaultSharedPreferences(dialog.getContext());
         this.contact = contact;
