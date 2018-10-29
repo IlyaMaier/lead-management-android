@@ -94,7 +94,7 @@ public class EditContactActivityViewModel extends AndroidViewModel {
         try {
              contactId = mContact.getValue().getId();
         } catch (NullPointerException e) {
-            Toast.makeText(getApplication(), "Something went wrong.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplication(), "Something went wrong.", Toast.LENGTH_SHORT).show(); 
             e.printStackTrace();
         }
         final List<ContactNumber> contactNumbers = mContactNumbers.getValue();
