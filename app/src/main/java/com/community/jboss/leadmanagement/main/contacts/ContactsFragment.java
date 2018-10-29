@@ -1,11 +1,9 @@
 package com.community.jboss.leadmanagement.main.contacts;
 
-import android.animation.LayoutTransition;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.ActionBar;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -24,6 +22,8 @@ import com.community.jboss.leadmanagement.main.MainFragment;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+
+import static com.community.jboss.leadmanagement.ContactsActivity.C;
 
 public class ContactsFragment extends MainFragment implements ContactsAdapter.AdapterListener, SearchView.OnQueryTextListener {
 
@@ -50,9 +50,11 @@ public class ContactsFragment extends MainFragment implements ContactsAdapter.Ad
             mAdapter.replaceData(contacts);
         });
 
-        final MainActivity activity = (MainActivity) getActivity();
-        if (activity != null) {
-            activity.initFab();
+        if (C == null) {
+            final MainActivity activity = (MainActivity) getActivity();
+            if (activity != null) {
+                activity.initFab();
+            }
         }
 
         mAdapter = new ContactsAdapter(this);
@@ -69,40 +71,42 @@ public class ContactsFragment extends MainFragment implements ContactsAdapter.Ad
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        MenuItem searchMenuItem = menu.findItem(R.id.action_search);
-        MenuItem importItem = menu.findItem(R.id.action_import);
-        importItem.setVisible(true);
-        SearchView searchView = (SearchView) searchMenuItem.getActionView();
-        searchView.setQueryHint(getString(R.string.search));
-        searchView.onActionViewExpanded();
-        searchView.clearFocus();
-        searchView.setSubmitButtonEnabled(false);
-        searchView.setQueryRefinementEnabled(false);
-        searchView.setOnQueryTextListener(this);
-        searchMenuItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
-            @Override
-            public boolean onMenuItemActionExpand(MenuItem item) {
-                if(item==searchMenuItem){
-                    mAdapter.getFilter().filter(searchView.getQuery());
-                    if( mAdapter.getDataSize() == 0){
-                        textView.setVisibility(View.VISIBLE);
-                    } else{
+        if (C == null) {
+            super.onCreateOptionsMenu(menu, inflater);
+            MenuItem searchMenuItem = menu.findItem(R.id.action_search);
+            MenuItem importItem = menu.findItem(R.id.action_import);
+            importItem.setVisible(true);
+            SearchView searchView = (SearchView) searchMenuItem.getActionView();
+            searchView.setQueryHint(getString(R.string.search));
+            searchView.onActionViewExpanded();
+            searchView.clearFocus();
+            searchView.setSubmitButtonEnabled(false);
+            searchView.setQueryRefinementEnabled(false);
+            searchView.setOnQueryTextListener(this);
+            searchMenuItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
+                @Override
+                public boolean onMenuItemActionExpand(MenuItem item) {
+                    if (item == searchMenuItem) {
+                        mAdapter.getFilter().filter(searchView.getQuery());
+                        if (mAdapter.getDataSize() == 0) {
+                            textView.setVisibility(View.VISIBLE);
+                        } else {
+                            textView.setVisibility(View.GONE);
+                        }
+                    }
+                    return true;
+                }
+
+                @Override
+                public boolean onMenuItemActionCollapse(MenuItem item) {
+                    if (item == searchMenuItem) {
+                        mAdapter.getFilter().filter("");
                         textView.setVisibility(View.GONE);
                     }
+                    return true;
                 }
-                return true;
-            }
-
-            @Override
-            public boolean onMenuItemActionCollapse(MenuItem item) {
-                if(item==searchMenuItem){
-                    mAdapter.getFilter().filter("");
-                    textView.setVisibility(View.GONE);
-                }
-                return true;
-            }
-        });
+            });
+        }
     }
 
     @Override
@@ -125,8 +129,10 @@ public class ContactsFragment extends MainFragment implements ContactsAdapter.Ad
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
-        MenuItem item = menu.findItem(R.id.action_search);
-        item.setVisible(true);
+        if (C == null) {
+            MenuItem item = menu.findItem(R.id.action_search);
+            item.setVisible(true);
+        }
     }
 
     @Override
@@ -137,10 +143,9 @@ public class ContactsFragment extends MainFragment implements ContactsAdapter.Ad
     @Override
     public boolean onQueryTextChange(String newText) {
         mAdapter.getFilter().filter(newText);
-        if (mAdapter.getDataSize() == 0){
+        if (mAdapter.getDataSize() == 0) {
             textView.setVisibility(View.VISIBLE);
-        }
-        else {
+        } else {
             textView.setVisibility(View.GONE);
         }
         return true;
