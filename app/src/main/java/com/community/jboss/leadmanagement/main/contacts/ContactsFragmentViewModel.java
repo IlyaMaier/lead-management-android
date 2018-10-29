@@ -25,7 +25,7 @@ public class ContactsFragmentViewModel extends AndroidViewModel {
         return mContacts;
     }
 
-    public void deleteContact(Contact contact) {
+    void deleteContact(Contact contact) {
         final ContactDao dao = DbUtil.contactDao(getApplication());
         dao.delete(contact);
     }

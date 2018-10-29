@@ -6,7 +6,7 @@ public class ImportContact {
     private String number;
     private boolean checked = false;
 
-    public ImportContact(String name, String number) {
+    ImportContact(String name, String number) {
         this.name = name;
         this.number = number;
     }

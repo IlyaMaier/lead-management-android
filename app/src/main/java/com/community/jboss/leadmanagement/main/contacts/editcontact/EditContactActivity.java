@@ -8,9 +8,11 @@ import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.community.jboss.leadmanagement.R;
 import com.community.jboss.leadmanagement.data.entities.ContactNumber;
@@ -38,7 +40,7 @@ public class EditContactActivity extends AppCompatActivity {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         boolean useDarkTheme = preferences.getBoolean(PREF_DARK_THEME, false);
 
-        if(useDarkTheme) {
+        if (useDarkTheme) {
             setTheme(R.style.AppTheme_BG);
         }
 
@@ -66,12 +68,18 @@ public class EditContactActivity extends AppCompatActivity {
         });
 
         final Intent intent = getIntent();
-        final String number = intent.getStringExtra(INTENT_EXTRA_CONTACT_NUM);
-        if(mViewModel.getContactNumberByNumber(number)!=null){
-            mViewModel.setContact(mViewModel.getContactNumberByNumber(number).getContactId());
-        }else{
-            mViewModel.setContact(null);
-            contactNumberField.setText(number);
+        String TAG = "EditContactActivity";
+        if (intent != null) {
+            final String number = intent.getStringExtra(INTENT_EXTRA_CONTACT_NUM);
+            if (mViewModel.getContactNumberByNumber(number) != null) {
+                mViewModel.setContact(mViewModel.getContactNumberByNumber(number).getContactId());
+            } else {
+                mViewModel.setContact(null);
+                contactNumberField.setText(number);
+            }
+        } else {
+            Toast.makeText(this, "Something went wrong.", Toast.LENGTH_SHORT).show();
+            Log.d(TAG, "onCreate: intent is null");
         }
 
         toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_close_black_24dp));
@@ -79,6 +87,9 @@ public class EditContactActivity extends AppCompatActivity {
         final ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
+        } else {
+            Toast.makeText(this, "Something went wrong.", Toast.LENGTH_SHORT).show();
+            Log.d(TAG, "onCreate: actionbar is null");
         }
     }
 
@@ -110,11 +121,10 @@ public class EditContactActivity extends AppCompatActivity {
     }
 
 
-
     //TODO Add multiple numbers
     private void saveContact() {
         // Check is Name or Password is empty
-        if (!checkEditText(contactNameField, "Please enter name")||!checkNo(contactNumberField,"Enter Correct no.")
+        if (!checkEditText(contactNameField, "Please enter name") || !checkNo(contactNumberField, "Enter Correct no.")
                 || !checkEditText(contactNumberField, "Please enter number")) {
             return;
         }
@@ -137,6 +147,7 @@ public class EditContactActivity extends AppCompatActivity {
 
         return true;
     }
+
     private boolean checkNo(EditText editText, String errorStr) {
         if (editText.getText().toString().length() < 4) {
             editText.setError(errorStr);

@@ -19,7 +19,7 @@ import butterknife.ButterKnife;
 
 public class ImportsAdapter extends RecyclerView.Adapter<ImportsAdapter.ViewHolder> {
     private List<ImportContact> mDataset;
-    List<ImportContact> contactsToImport = new ArrayList<>();
+    private List<ImportContact> contactsToImport = new ArrayList<>();
 
 
     final class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -82,7 +82,7 @@ public class ImportsAdapter extends RecyclerView.Adapter<ImportsAdapter.ViewHold
         return mDataset.size();
     }
 
-    public List<ImportContact> getContactsToImport(){
+    List<ImportContact> getContactsToImport(){
         return this.contactsToImport;
     }
 }

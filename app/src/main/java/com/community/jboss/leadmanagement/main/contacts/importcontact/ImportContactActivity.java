@@ -12,6 +12,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.community.jboss.leadmanagement.R;
 import com.community.jboss.leadmanagement.data.daos.ContactDao;
@@ -43,7 +44,7 @@ public class ImportContactActivity extends AppCompatActivity {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         boolean useDarkTheme = preferences.getBoolean(PREF_DARK_THEME, false);
 
-        if(useDarkTheme) {
+        if (useDarkTheme) {
             setTheme(R.style.AppTheme_Dark);
         }
         super.onCreate(savedInstanceState);
@@ -64,7 +65,7 @@ public class ImportContactActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.import_contact_menu,menu);
+        getMenuInflater().inflate(R.menu.import_contact_menu, menu);
         return true;
     }
 
@@ -72,15 +73,15 @@ public class ImportContactActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if(id==R.id.finishImport){
+        if (id == R.id.finishImport) {
             List<ImportContact> contacts = adapter.getContactsToImport();
-            if(contacts.size()==0){
+            if (contacts.size() == 0) {
                 onBackPressed();
-            }else{
-                for(ImportContact contact:contacts){
+            } else {
+                for (ImportContact contact : contacts) {
                     String contactUUID = UUID.randomUUID().toString();
-                    contactDao.insert(new Contact(contactUUID,contact.getName()));
-                    numberDao.insert(new ContactNumber(contact.getNumber(),contactUUID));
+                    contactDao.insert(new Contact(contactUUID, contact.getName()));
+                    numberDao.insert(new ContactNumber(contact.getNumber(), contactUUID));
                 }
                 onBackPressed();
             }
@@ -89,36 +90,42 @@ public class ImportContactActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public List<ImportContact> getContacts(){
+    public List<ImportContact> getContacts() {
         Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
-        String[] projection    = new String[] {ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
+        String[] projection = new String[]{ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
                 ContactsContract.CommonDataKinds.Phone.NUMBER};
 
         Cursor people = getContentResolver().query(uri, projection, null, null, null);
 
-        int indexName = people.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
-        int indexNumber = people.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
+        try {
+            int indexName = people.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
+            int indexNumber = people.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
 
-        List<ImportContact> contacts = new ArrayList<>();
+            List<ImportContact> contacts = new ArrayList<>();
 
-        if(people.moveToFirst()) {
-            do {
-                String name   = people.getString(indexName);
-                String number = people.getString(indexNumber)
-                        .replace("(","")
-                        .replace(")","")
-                        .replace(" ","")
-                        .replace("-","");
-                if(numberDao.getContactNumber(number)==null) {
-                    ImportContact contact = new ImportContact(name, number);
-                    contacts.add(contact);
-                }
-            } while (people.moveToNext());
+            if (people.moveToFirst()) {
+                do {
+                    String name = people.getString(indexName);
+                    String number = people.getString(indexNumber)
+                            .replace("(", "")
+                            .replace(")", "")
+                            .replace(" ", "")
+                            .replace("-", "");
+                    if (numberDao.getContactNumber(number) == null) {
+                        ImportContact contact = new ImportContact(name, number);
+                        contacts.add(contact);
+                    }
+                } while (people.moveToNext());
+            }
+            people.close();
+            return contacts;
+        } catch (NullPointerException e) {
+            Toast.makeText(this, "Something went wrong.", Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
         }
-        people.close();
-        return contacts;
+        return null;
+
+
     }
-
-
 }
 
