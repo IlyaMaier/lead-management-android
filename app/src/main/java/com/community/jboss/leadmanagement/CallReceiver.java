@@ -39,11 +39,11 @@ public class CallReceiver extends BroadcastReceiver {
         this.number = callerNum;
 
         if (state.equals(TelephonyManager.EXTRA_STATE_RINGING)) {
-            showNotification();
+            showNotification(false);
         } else if (state.equals(TelephonyManager.EXTRA_STATE_IDLE)) {
             hideNotification();
         } else if (state.equals(TelephonyManager.EXTRA_STATE_OFFHOOK)) {
-            showNotification();
+            showNotification(true);
         }
     }
 
@@ -55,7 +55,7 @@ public class CallReceiver extends BroadcastReceiver {
         }
     }
 
-    private void showNotification() {
+    private void showNotification(boolean offhook) {
 
         final Intent notificationIntent = new Intent(mContext, EditContactActivity.class);
         String CHANNEL_ID = "lead-management-ch";
@@ -73,6 +73,10 @@ public class CallReceiver extends BroadcastReceiver {
                 .setContentIntent(contentIntent)
                 .setContentText("Number: " + number)
                 .setChannelId(CHANNEL_ID);
+
+        final Intent i = new Intent(mContext, RecordingService.class);
+        PendingIntent pi = PendingIntent.getService(mContext, 0, i, 0);
+        if(offhook) notification.addAction(0,"RECORD NOW",pi);
 
         final NotificationManager manager =
                 (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
