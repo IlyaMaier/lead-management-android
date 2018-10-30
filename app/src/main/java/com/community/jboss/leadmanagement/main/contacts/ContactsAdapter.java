@@ -19,8 +19,10 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.graphics.Color;
+import android.widget.Toast;
 
 import static com.community.jboss.leadmanagement.SettingsActivity.PREF_DARK_THEME;
+import static com.community.jboss.leadmanagement.main.MainActivity.SIGN_IN;
 
 import com.community.jboss.leadmanagement.CustomDialogBox;
 import com.community.jboss.leadmanagement.PermissionManager;
@@ -30,6 +32,7 @@ import com.community.jboss.leadmanagement.data.daos.ContactNumberDao;
 import com.community.jboss.leadmanagement.data.entities.Contact;
 import com.community.jboss.leadmanagement.main.contacts.editcontact.EditContactActivity;
 import com.community.jboss.leadmanagement.utils.DbUtil;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,6 +79,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
     }
 
     private Context mContext;
+
     @Override
     public Filter getFilter() {
         mContacts = spareData;
@@ -83,17 +87,16 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
             @Override
             protected FilterResults performFiltering(CharSequence constraint) {
                 String data = constraint.toString();
-                if(data.isEmpty()){
+                if (data.isEmpty()) {
                     mContacts = spareData;
                 }
                 List<Contact> filteredList = new ArrayList<>();
                 final ContactNumberDao dao = DbUtil.contactNumberDao(mContext);
 
-                for(Contact contact: mContacts){
-                    if(contact.getName().toLowerCase().contains(data.toLowerCase())){
+                for (Contact contact : mContacts) {
+                    if (contact.getName().toLowerCase().contains(data.toLowerCase())) {
                         filteredList.add(contact);
-                    }
-                    else if (dao.getContactNumbers(contact.getId()).get(0).getNumber().contains(data)) {
+                    } else if (dao.getContactNumbers(contact.getId()).get(0).getNumber().contains(data)) {
                         filteredList.add(contact);
                     }
                 }
@@ -135,16 +138,18 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
 
             mContext = v.getContext();
             mPref = PreferenceManager.getDefaultSharedPreferences(mContext);
-            permManager = new PermissionManager(mContext,(Activity) mContext);
+            permManager = new PermissionManager(mContext, (Activity) mContext);
             ButterKnife.bind(this, v);
 
             v.setOnClickListener(this);
             v.setOnLongClickListener(this);
 
             deleteButton.setOnClickListener(v1 -> {
-                CustomDialogBox dialogBox = new CustomDialogBox();
-                dialogBox.showAlert((Activity) mContext,mContact,mAdapter);
-                deleteButton.setVisibility(View.INVISIBLE);
+                if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+                    CustomDialogBox dialogBox = new CustomDialogBox();
+                    dialogBox.showAlert((Activity) mContext, mContact, mAdapter);
+                    deleteButton.setVisibility(View.INVISIBLE);
+                } else Toast.makeText(mContext, SIGN_IN, Toast.LENGTH_SHORT).show();
             });
         }
 
@@ -170,78 +175,77 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
 
         @Override
         public void onClick(View view) {
-            final Context context = view.getContext();
+            if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+                final Context context = view.getContext();
 
-            Dialog detailDialog;
-            detailDialog = new Dialog(context);
+                Dialog detailDialog;
+                detailDialog = new Dialog(context);
 
-            TextView txtClose;
-            TextView popupName;
-            TextView contactNum;
-            TextView mail;
-            Button btnEdit;
-            Button btnCall;
-            Button btnMsg;
-            LinearLayout layout;
+                TextView txtClose;
+                TextView popupName;
+                TextView contactNum;
+                TextView mail;
+                Button btnEdit;
+                Button btnCall;
+                Button btnMsg;
+                LinearLayout layout;
 
-            detailDialog.setContentView(R.layout.popup_detail);
-            txtClose = detailDialog.findViewById(R.id.txt_close);
-            btnEdit = detailDialog.findViewById(R.id.btn_edit);
-            popupName = detailDialog.findViewById(R.id.popup_name);
-            contactNum = detailDialog.findViewById(R.id.txt_num);
-            btnCall = detailDialog.findViewById(R.id.btn_call);
-            btnMsg = detailDialog.findViewById(R.id.btn_msg);
-            mail = detailDialog.findViewById(R.id.popupMail);
-            layout = detailDialog.findViewById(R.id.popupLayout);
+                detailDialog.setContentView(R.layout.popup_detail);
+                txtClose = detailDialog.findViewById(R.id.txt_close);
+                btnEdit = detailDialog.findViewById(R.id.btn_edit);
+                popupName = detailDialog.findViewById(R.id.popup_name);
+                contactNum = detailDialog.findViewById(R.id.txt_num);
+                btnCall = detailDialog.findViewById(R.id.btn_call);
+                btnMsg = detailDialog.findViewById(R.id.btn_msg);
+                mail = detailDialog.findViewById(R.id.popupMail);
+                layout = detailDialog.findViewById(R.id.popupLayout);
 
-            if(mPref.getBoolean(PREF_DARK_THEME,false)){
-                layout.setBackgroundColor(Color.parseColor("#303030"));
-                popupName.setTextColor(Color.WHITE);
-                contactNum.setTextColor(Color.WHITE);
-                mail.setTextColor(Color.WHITE);
-                txtClose.setBackground(mContext.getResources().getDrawable(R.drawable.ic_close_white));
-            }
-
-            popupName.setText(name.getText());
-            contactNum.setText(number.getText());
-
-            txtClose.setOnClickListener(view1 -> detailDialog.dismiss());
-
-            btnEdit.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    final Intent intent = new Intent(context, EditContactActivity.class);
-                    intent.putExtra(EditContactActivity.INTENT_EXTRA_CONTACT_NUM, number.getText().toString());
-                    context.startActivity(intent);
+                if (mPref.getBoolean(PREF_DARK_THEME, false)) {
+                    layout.setBackgroundColor(Color.parseColor("#303030"));
+                    popupName.setTextColor(Color.WHITE);
+                    contactNum.setTextColor(Color.WHITE);
+                    mail.setTextColor(Color.WHITE);
+                    txtClose.setBackground(mContext.getResources().getDrawable(R.drawable.ic_close_white));
                 }
-            });
 
+                popupName.setText(name.getText());
+                contactNum.setText(number.getText());
 
-            btnCall.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if(permManager.permissionStatus(Manifest.permission.CALL_PHONE)) {
-                        Intent intent = new Intent(Intent.ACTION_CALL);
-                        intent.setData(Uri.parse("tel:" + number.getText().toString()));
+                txtClose.setOnClickListener(view1 -> detailDialog.dismiss());
+
+                btnEdit.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        final Intent intent = new Intent(context, EditContactActivity.class);
+                        intent.putExtra(EditContactActivity.INTENT_EXTRA_CONTACT_NUM, number.getText().toString());
                         context.startActivity(intent);
-                    }else{
-                        permManager.requestPermission(58,Manifest.permission.CALL_PHONE);
                     }
-                }
-            });
-
-            btnMsg.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("sms:"
-                            + number.getText().toString())));
-                }
-            });
-
-            detailDialog.show();
+                });
 
 
+                btnCall.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (permManager.permissionStatus(Manifest.permission.CALL_PHONE)) {
+                            Intent intent = new Intent(Intent.ACTION_CALL);
+                            intent.setData(Uri.parse("tel:" + number.getText().toString()));
+                            context.startActivity(intent);
+                        } else {
+                            permManager.requestPermission(58, Manifest.permission.CALL_PHONE);
+                        }
+                    }
+                });
 
+                btnMsg.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("sms:"
+                                + number.getText().toString())));
+                    }
+                });
+
+                detailDialog.show();
+            } else Toast.makeText(mContext, SIGN_IN, Toast.LENGTH_SHORT).show();
         }
 
         @Override
@@ -250,7 +254,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
                     ? View.GONE
                     : View.VISIBLE;
             deleteButton.setVisibility(newVisibility);
-            if(mPref.getBoolean(SettingsActivity.PREF_DARK_THEME,false)){
+            if (mPref.getBoolean(SettingsActivity.PREF_DARK_THEME, false)) {
                 deleteButton.setBackgroundColor(Color.parseColor("#303030"));
                 deleteButton.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_close_white));
             }
@@ -258,7 +262,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
         }
     }
 
-    public int getDataSize(){
+    public int getDataSize() {
         return mContacts.size();
     }
 }
