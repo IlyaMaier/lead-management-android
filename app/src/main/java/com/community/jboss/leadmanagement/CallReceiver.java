@@ -53,6 +53,9 @@ public class CallReceiver extends BroadcastReceiver {
         if (manager != null) {
             manager.cancel(ID);
         }
+
+        final Intent i = new Intent(mContext, RecordingService.class);
+        mContext.stopService(i);
     }
 
     private void showNotification(boolean offhook) {
@@ -76,7 +79,7 @@ public class CallReceiver extends BroadcastReceiver {
 
         final Intent i = new Intent(mContext, RecordingService.class);
         PendingIntent pi = PendingIntent.getService(mContext, 0, i, 0);
-        if(offhook) notification.addAction(0,"RECORD NOW",pi);
+        if (offhook) notification.addAction(0, "RECORD NOW", pi);
 
         final NotificationManager manager =
                 (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
