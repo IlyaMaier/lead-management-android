@@ -89,6 +89,10 @@ dependencies {
 
     //Kotlin
     implementation "org.jetbrains.kotlin:kotlin-stdlib:1.2.70"
+
+    // Info Slider
+    implementation 'com.github.msayan:tutorial-view:v1.0.6'
+
 }
 
 //apply plugin: 'com.google.gms.google-services'
