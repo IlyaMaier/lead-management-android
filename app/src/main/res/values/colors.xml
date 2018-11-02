@@ -7,4 +7,10 @@
     <color name="darkColorPrimary">#04bcf4</color>
     <color name="darkColorPrimaryDark">#153f87</color>
     <color name="darkColorAccent">#FF4081</color>
+    <color name="coloIntro">#9e9e9e</color>
+    <color name="white">#ffffff</color>
+    <color name="grey">#bdbdbd</color>
+    <color name="first_fragment">#d50000</color>
+    <color name="second_fragment">#43a047</color>
+    <color name="third_fragment">#304ffe</color>
 </resources>
