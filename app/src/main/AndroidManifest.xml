@@ -32,7 +32,7 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".main.contacts.editcontact.EditContactActivity"
-            android:theme="@style/Theme.Design.Light.NoActionBar"></activity>
+            android:theme="@style/Theme.Design.Light.NoActionBar" />
 
         <receiver
             android:name=".CallReceiver"
@@ -50,7 +50,10 @@
         <activity
             android:name=".main.contacts.importcontact.ImportContactActivity"
             android:parentActivityName=".main.MainActivity" />
-        <activity android:name=".InfoSliderActivity"></activity>
+        <activity android:name=".InfoSliderActivity" />
+        <activity
+            android:name=".main.contacts.PopUpActivity"
+            android:theme="@style/AppTheme.Transparent" />
     </application>
 
 </manifest>

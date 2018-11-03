@@ -38,14 +38,20 @@
                 android:layout_marginRight="@dimen/activity_horizontal_margin"
                 android:src="@drawable/ic_person_grey_24dp" />
 
-            <EditText
-                android:id="@+id/contact_name_field"
+            <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                android:layout_marginStart="@dimen/activity_horizontal_margin"
-                android:hint="@string/name"
-                android:inputType="text" />
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:id="@+id/contact_name_field"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/activity_horizontal_margin"
+                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                    android:hint="@string/name"
+                    android:inputType="text" />
+
+            </android.support.design.widget.TextInputLayout>
 
         </LinearLayout>
 
@@ -63,15 +69,21 @@
                 android:layout_marginRight="@dimen/activity_horizontal_margin"
                 android:src="@drawable/ic_phone_grey_24dp" />
 
-            <EditText
-                android:id="@+id/contact_number_field"
-                android:maxLength="13"
+            <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                android:layout_marginStart="@dimen/activity_horizontal_margin"
-                android:hint="@string/phone"
-                android:inputType="number" />
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:id="@+id/contact_number_field"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/activity_horizontal_margin"
+                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                    android:hint="@string/phone"
+                    android:inputType="number"
+                    android:maxLength="13" />
+
+            </android.support.design.widget.TextInputLayout>
 
         </LinearLayout>
 
