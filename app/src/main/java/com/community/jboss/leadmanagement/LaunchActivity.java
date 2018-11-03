@@ -26,6 +26,7 @@ public class LaunchActivity extends AppCompatActivity {
             finish();
         } else {
             final Intent intent = new Intent(this, MainActivity.class);
+
             startActivity(intent);
             finish();
         }

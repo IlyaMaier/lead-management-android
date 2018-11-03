@@ -50,9 +50,11 @@
         <activity
             android:name=".main.contacts.importcontact.ImportContactActivity"
             android:parentActivityName=".main.MainActivity" />
+
         <activity
             android:name=".intro.IntroActivity"
             android:theme="@style/AppTheme.Intro" />
+
     </application>
 
 </manifest>
