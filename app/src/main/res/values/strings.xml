@@ -82,5 +82,14 @@
     <string name="slide_2_content">Easily manage and safely store all your business contacts</string>
     <string name="slide_3_header">Never forget again</string>
     <string name="slide_3_content">Record conversations to always have a backup of your important business calls</string>
+    <string name="phone_number">Phone number</string>
+    <string name="or">OR</string>
+    <string name="sign_in_google">Sign in with Google</string>
+    <string name="sign_in_with_phone_number">Sign in with phone number</string>
+    <string name="not_registered_yet">Not registered yet?</string>
+    <string name="repeat_password">Repeat password</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="verification_code">Verification code</string>
+    <string name="send_sms">Send SMS</string>
 
 </resources>

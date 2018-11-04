@@ -1,6 +1,5 @@
 package com.community.jboss.leadmanagement.main;
 
-
 import android.Manifest;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
@@ -16,15 +15,12 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.community.jboss.leadmanagement.BaseActivity;
+import com.community.jboss.leadmanagement.LoginActivity;
 import com.community.jboss.leadmanagement.PermissionManager;
 import com.community.jboss.leadmanagement.R;
 import com.community.jboss.leadmanagement.SettingsActivity;
@@ -32,31 +28,16 @@ import com.community.jboss.leadmanagement.main.contacts.ContactsFragment;
 import com.community.jboss.leadmanagement.main.contacts.editcontact.EditContactActivity;
 import com.community.jboss.leadmanagement.main.contacts.importcontact.ImportContactActivity;
 import com.community.jboss.leadmanagement.main.groups.GroupsFragment;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.FirebaseOptions;
-import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.GoogleAuthProvider;
-import com.mikhaellopez.circularimageview.CircularImageView;
-
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import timber.log.Timber;
+
 import static com.community.jboss.leadmanagement.SettingsActivity.PREF_DARK_THEME;
 
 public class MainActivity extends BaseActivity
-        implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
+        implements NavigationView.OnNavigationItemSelectedListener {
 
     private final int ID = 512;
     @BindView(R.id.toolbar)
@@ -68,12 +49,6 @@ public class MainActivity extends BaseActivity
     @BindView(R.id.nav_view)
     NavigationView navigationView;
 
-    private static final String TAG = "GoogleActivity";
-    private static final int RC_SIGN_IN = 9001;
-    private FirebaseAuth mAuth;
-    private GoogleSignInClient mGoogleSignInClient;
-
-
     private MainActivityViewModel mViewModel;
     private PermissionManager permissionManager;
 
@@ -84,7 +59,7 @@ public class MainActivity extends BaseActivity
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         useDarkTheme = preferences.getBoolean(PREF_DARK_THEME, false);
 
-        if(useDarkTheme) {
+        if (useDarkTheme) {
             setTheme(R.style.AppTheme_BG);
         }
 
@@ -98,37 +73,16 @@ public class MainActivity extends BaseActivity
         mViewModel.getSelectedNavItem().observe(this, this::displayNavigationItem);
 
         NavigationView navView = findViewById(R.id.nav_view);
-        View header =  navView.getHeaderView(0);
+        View header = navView.getHeaderView(0);
 
-        header.findViewById(R.id.sign_in_button).setOnClickListener(this);
-        header.findViewById(R.id.sign_out_button).setOnClickListener(this);
+        //TODO: Set avatar, name and email of user into header
 
-        boolean isFirebaseAlreadyIntialized=false;
-        List<FirebaseApp> firebaseApps = FirebaseApp.getApps(this);
-        for(FirebaseApp app : firebaseApps){
-            if(app.getName().equals(FirebaseApp.DEFAULT_APP_NAME)){
-                isFirebaseAlreadyIntialized=true;
-            }
-        }
-
-        if(!isFirebaseAlreadyIntialized) {
-            FirebaseApp.initializeApp(this, new FirebaseOptions.Builder()
-                    .setApiKey("YOUR_API_KEY")
-                    .setApplicationId("YOUR_APPLICATION_ID")
-                    .setDatabaseUrl("YOUR_DB_URL")
-                    .setGcmSenderId("YOUR_SENDER_ID")
-                    .setStorageBucket("YOUR_STORAGE_BUCKET").build());
-        }
-
-        
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken("YOUR_REQUEST_ID_TOKEN")
-                .requestEmail()
-                .build();
-
-        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
-        mAuth = FirebaseAuth.getInstance();
-
+        header.findViewById(R.id.sign_out_button).setOnClickListener(view -> {
+            FirebaseAuth.getInstance().signOut();
+            Intent i = new Intent(this, LoginActivity.class);
+            startActivity(i);
+            finish();
+        });
 
         permissionManager = new PermissionManager(this, this);
         if (!permissionManager.permissionStatus(Manifest.permission.READ_PHONE_STATE)) {
@@ -185,11 +139,11 @@ public class MainActivity extends BaseActivity
         if (id == R.id.action_settings) {
             startActivity(new Intent(this, SettingsActivity.class));
             return true;
-        }else if( id == R.id.action_import ){
-            if(permissionManager.permissionStatus(Manifest.permission.READ_CONTACTS)){
-                startActivity(new Intent(MainActivity.this,ImportContactActivity.class));
-            }else{
-                permissionManager.requestPermission(109,Manifest.permission.READ_CONTACTS);
+        } else if (id == R.id.action_import) {
+            if (permissionManager.permissionStatus(Manifest.permission.READ_CONTACTS)) {
+                startActivity(new Intent(MainActivity.this, ImportContactActivity.class));
+            } else {
+                permissionManager.requestPermission(109, Manifest.permission.READ_CONTACTS);
             }
             return true;
         }
@@ -259,126 +213,6 @@ public class MainActivity extends BaseActivity
         setTitle(newFragment.getTitle());
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        // Check if user is signed in (non-null) and update UI accordingly.
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        updateUI(currentUser);
-    }
-    // [END on_start_check_user]
-
-    // [START onactivityresult]
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
-        if (requestCode == RC_SIGN_IN) {
-            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
-            try {
-                // Google Sign In was successful, authenticate with Firebase
-                GoogleSignInAccount account = task.getResult(ApiException.class);
-                firebaseAuthWithGoogle(account);
-            } catch (ApiException e) {
-                // Google Sign In failed, update UI appropriately
-                Log.w(TAG, "Google sign in failed", e);
-                // [START_EXCLUDE]
-                updateUI(null);
-                // [END_EXCLUDE]
-            }
-        }
-    }
-
-    // [START auth_with_google]
-    private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
-        Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
-        showProgressDialog();
-        AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
-        mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d(TAG, "signInWithCredential:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            updateUI(user);
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Log.w(TAG, "signInWithCredential:failure", task.getException());
-                            //Snackbar.make(findViewById(R.id.main_layout), "Authentication Failed.", Snackbar.LENGTH_SHORT).show();
-                            Toast.makeText(getApplicationContext(), "Authentication failed", Toast.LENGTH_SHORT ).show();
-                            updateUI(null);
-                        }
-                        // [START_EXCLUDE]
-                        hideProgressDialog();
-                        // [END_EXCLUDE]
-                    }
-                });
-    }
-
-
-    private void signIn() {
-        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-        startActivityForResult(signInIntent, RC_SIGN_IN);
-    }
-
-    private void signOut() {
-        // Firebase sign out
-        mAuth.signOut();
-
-        // Google sign out
-        mGoogleSignInClient.signOut().addOnCompleteListener(this,
-                new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        updateUI(null);
-                    }
-                });
-    }
-
-
-    private void updateUI(FirebaseUser user) {
-        hideProgressDialog();
-        View header =  navigationView.getHeaderView(0);
-
-        TextView mDetailTextView = header.findViewById(R.id.nav_detail);
-        TextView mStatusTextView = header.findViewById(R.id.nav_status);
-        CircularImageView mProfileImageView = header.findViewById(R.id.nav_prof_pic);
-
-        if (user != null) {
-            Toast.makeText(getApplicationContext(), "Signed in", Toast.LENGTH_SHORT).show();
-
-            mStatusTextView.setText(getString(R.string.google_status_fmt, user.getEmail()));
-            mDetailTextView.setText(getString(R.string.firebase_status_fmt, user.getDisplayName()));
-            mProfileImageView.setVisibility(View.VISIBLE);
-            Glide.with(this).load(user.getPhotoUrl()).into(mProfileImageView);
-
-            header.findViewById(R.id.sign_in_button).setVisibility(View.GONE);
-            header.findViewById(R.id.sign_out_button).setVisibility(View.VISIBLE);
-        } else {
-            Toast.makeText(getApplicationContext(), "Signed out", Toast.LENGTH_SHORT).show();
-
-            mStatusTextView.setText(R.string.app_desc);
-            mDetailTextView.setText(R.string.app_name);
-            Glide.with(this).load("https://github.com/jboss-outreach/lead-management-android/blob/master/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png?raw=true").into(mProfileImageView);
-
-            header.findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
-            header.findViewById(R.id.sign_out_button).setVisibility(View.GONE);
-        }
-    }
-
-    @Override
-    public void onClick(View v) {
-        int i = v.getId();
-        if (i == R.id.sign_in_button) {
-            signIn();
-        } else if (i == R.id.sign_out_button) {
-            signOut();
-        }
-    }
-
-
     public void initFab() {
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.content_frame);
         if (fragment instanceof ContactsFragment) {
@@ -398,17 +232,16 @@ public class MainActivity extends BaseActivity
         startActivity(intent);
     }
 
-    private void visibleBtn(boolean darkTheme){
+    private void visibleBtn(boolean darkTheme) {
         NavigationView navigationView = findViewById(R.id.nav_view);
         Menu menu = navigationView.getMenu();
         MenuItem darkBtn = menu.findItem(R.id.toggle_theme);
         MenuItem lightBtn = menu.findItem(R.id.light_theme);
 
-        if (darkTheme){
+        if (darkTheme) {
             darkBtn.setVisible(false);
             lightBtn.setVisible(true);
-        }
-        else {
+        } else {
             darkBtn.setVisible(true);
             lightBtn.setVisible(false);
         }

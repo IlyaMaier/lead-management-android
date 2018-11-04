@@ -39,7 +39,7 @@ public class InfoSliderActivity extends TutorialActivity {
     @Override
     public void finishTutorial() {
         super.finishTutorial();
-        final Intent intent = new Intent(this, MainActivity.class);
+        final Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
 
         SharedPreferences preferences = getSharedPreferences(getString(R.string.preferences_name), Context.MODE_PRIVATE);

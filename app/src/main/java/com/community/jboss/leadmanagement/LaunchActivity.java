@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
 import com.community.jboss.leadmanagement.main.MainActivity;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class LaunchActivity extends AppCompatActivity {
     boolean wasRunBefore;
@@ -19,12 +20,14 @@ public class LaunchActivity extends AppCompatActivity {
         wasRunBefore = preferences.getBoolean(getString(R.string.was_run_before_key), false);
 
         //Show info slider on first run
-        if(wasRunBefore) {
-            final Intent intent = new Intent(this, MainActivity.class);
+        if (wasRunBefore) {
+            final Intent intent;
+            if (FirebaseAuth.getInstance().getCurrentUser() != null)
+                intent = new Intent(this, MainActivity.class);
+            else intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
             finish();
-        }
-        else {
+        } else {
             final Intent intent = new Intent(this, InfoSliderActivity.class);
             startActivity(intent);
             finish();
