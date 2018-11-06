@@ -1,11 +1,14 @@
 package com.community.jboss.leadmanagement.main.contacts;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.support.v7.widget.RecyclerView;
@@ -22,6 +25,7 @@ import android.graphics.Color;
 
 import static com.community.jboss.leadmanagement.SettingsActivity.PREF_DARK_THEME;
 
+import com.bumptech.glide.Glide;
 import com.community.jboss.leadmanagement.CustomDialogBox;
 import com.community.jboss.leadmanagement.PermissionManager;
 import com.community.jboss.leadmanagement.R;
@@ -30,13 +34,13 @@ import com.community.jboss.leadmanagement.data.daos.ContactNumberDao;
 import com.community.jboss.leadmanagement.data.entities.Contact;
 import com.community.jboss.leadmanagement.main.contacts.editcontact.EditContactActivity;
 import com.community.jboss.leadmanagement.utils.DbUtil;
+import com.mikhaellopez.circularimageview.CircularImageView;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-
 
 public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHolder> implements Filterable {
     private List<Contact> mContacts;
@@ -76,6 +80,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
     }
 
     private Context mContext;
+
     @Override
     public Filter getFilter() {
         mContacts = spareData;
@@ -83,17 +88,16 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
             @Override
             protected FilterResults performFiltering(CharSequence constraint) {
                 String data = constraint.toString();
-                if(data.isEmpty()){
+                if (data.isEmpty()) {
                     mContacts = spareData;
                 }
                 List<Contact> filteredList = new ArrayList<>();
                 final ContactNumberDao dao = DbUtil.contactNumberDao(mContext);
 
-                for(Contact contact: mContacts){
-                    if(contact.getName().toLowerCase().contains(data.toLowerCase())){
+                for (Contact contact : mContacts) {
+                    if (contact.getName().toLowerCase().contains(data.toLowerCase())) {
                         filteredList.add(contact);
-                    }
-                    else if (dao.getContactNumbers(contact.getId()).get(0).getNumber().contains(data)) {
+                    } else if (dao.getContactNumbers(contact.getId()).get(0).getNumber().contains(data)) {
                         filteredList.add(contact);
                     }
                 }
@@ -117,6 +121,8 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
 
     final class ViewHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener, View.OnLongClickListener {
+        @BindView(R.id.contact_avatar)
+        CircularImageView avatar;
         @BindView(R.id.contact_name)
         TextView name;
         @BindView(R.id.contact_number)
@@ -124,18 +130,19 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
         @BindView(R.id.contact_delete)
         ImageButton deleteButton;
 
-
         private Contact mContact;
         private Context mContext;
         private PermissionManager permManager;
         private SharedPreferences mPref;
+        private String mEmail;
+        private byte[] mPhoto;
 
         ViewHolder(View v) {
             super(v);
 
             mContext = v.getContext();
             mPref = PreferenceManager.getDefaultSharedPreferences(mContext);
-            permManager = new PermissionManager(mContext,(Activity) mContext);
+            permManager = new PermissionManager(mContext, (Activity) mContext);
             ButterKnife.bind(this, v);
 
             v.setOnClickListener(this);
@@ -143,17 +150,26 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
 
             deleteButton.setOnClickListener(v1 -> {
                 CustomDialogBox dialogBox = new CustomDialogBox();
-                dialogBox.showAlert((Activity) mContext,mContact,mAdapter);
+                dialogBox.showAlert((Activity) mContext, mContact, mAdapter);
                 deleteButton.setVisibility(View.INVISIBLE);
             });
+        }
+
+        private Bitmap getBitmapFromBytes(byte[] bytes) {
+            return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
         }
 
         void bind(Contact contact) {
             mContact = contact;
 
-            // TODO add contact avatar
+            mEmail = mContact.getEmail();
+            mPhoto = mContact.getPhoto();
+
             name.setText(contact.getName());
             number.setText(getNumber());
+
+            if (contact.getPhoto() != null)
+                Glide.with(mContext).load(getBitmapFromBytes(contact.getPhoto())).into(avatar);
         }
 
         /**
@@ -168,6 +184,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
             return dao.getContactNumbers(mContact.getId()).get(0).getNumber();
         }
 
+        @SuppressLint("MissingPermission")
         @Override
         public void onClick(View view) {
             final Context context = view.getContext();
@@ -179,6 +196,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
             TextView popupName;
             TextView contactNum;
             TextView mail;
+            CircularImageView photo;
             Button btnEdit;
             Button btnCall;
             Button btnMsg;
@@ -192,9 +210,10 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
             btnCall = detailDialog.findViewById(R.id.btn_call);
             btnMsg = detailDialog.findViewById(R.id.btn_msg);
             mail = detailDialog.findViewById(R.id.popupMail);
+            photo = detailDialog.findViewById(R.id.popupPhoto);
             layout = detailDialog.findViewById(R.id.popupLayout);
 
-            if(mPref.getBoolean(PREF_DARK_THEME,false)){
+            if (mPref.getBoolean(PREF_DARK_THEME, false)) {
                 layout.setBackgroundColor(Color.parseColor("#303030"));
                 popupName.setTextColor(Color.WHITE);
                 contactNum.setTextColor(Color.WHITE);
@@ -204,43 +223,31 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
 
             popupName.setText(name.getText());
             contactNum.setText(number.getText());
+            mail.setText(mEmail);
+            Glide.with(context).load(mPhoto).into(photo);
 
             txtClose.setOnClickListener(view1 -> detailDialog.dismiss());
 
-            btnEdit.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    final Intent intent = new Intent(context, EditContactActivity.class);
-                    intent.putExtra(EditContactActivity.INTENT_EXTRA_CONTACT_NUM, number.getText().toString());
+            btnEdit.setOnClickListener(view12 -> {
+                final Intent intent = new Intent(context, EditContactActivity.class);
+                intent.putExtra(EditContactActivity.INTENT_EXTRA_CONTACT_NUM, number.getText().toString());
+                context.startActivity(intent);
+            });
+
+            btnCall.setOnClickListener(view13 -> {
+                if (permManager.permissionStatus(Manifest.permission.CALL_PHONE)) {
+                    Intent intent = new Intent(Intent.ACTION_CALL);
+                    intent.setData(Uri.parse("tel:" + number.getText().toString()));
                     context.startActivity(intent);
+                } else {
+                    permManager.requestPermission(58, Manifest.permission.CALL_PHONE);
                 }
             });
 
-
-            btnCall.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if(permManager.permissionStatus(Manifest.permission.CALL_PHONE)) {
-                        Intent intent = new Intent(Intent.ACTION_CALL);
-                        intent.setData(Uri.parse("tel:" + number.getText().toString()));
-                        context.startActivity(intent);
-                    }else{
-                        permManager.requestPermission(58,Manifest.permission.CALL_PHONE);
-                    }
-                }
-            });
-
-            btnMsg.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("sms:"
-                            + number.getText().toString())));
-                }
-            });
+            btnMsg.setOnClickListener(view14 -> context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("sms:"
+                    + number.getText().toString()))));
 
             detailDialog.show();
-
-
 
         }
 
@@ -250,7 +257,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
                     ? View.GONE
                     : View.VISIBLE;
             deleteButton.setVisibility(newVisibility);
-            if(mPref.getBoolean(SettingsActivity.PREF_DARK_THEME,false)){
+            if (mPref.getBoolean(SettingsActivity.PREF_DARK_THEME, false)) {
                 deleteButton.setBackgroundColor(Color.parseColor("#303030"));
                 deleteButton.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_close_white));
             }
@@ -258,7 +265,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
         }
     }
 
-    public int getDataSize(){
+    public int getDataSize() {
         return mContacts.size();
     }
 }

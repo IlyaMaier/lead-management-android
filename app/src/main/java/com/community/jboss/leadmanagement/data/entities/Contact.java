@@ -12,9 +12,12 @@ import java.util.UUID;
  */
 @Entity
 public class Contact {
-    @PrimaryKey @NonNull
+    @PrimaryKey
+    @NonNull
     private final String id;
     private String name;
+    private String email;
+    private byte[] photo;
 
     @Ignore
     public Contact(String name) {
@@ -38,4 +41,21 @@ public class Contact {
     public void setName(String name) {
         this.name = name;
     }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public byte[] getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(byte[] photo) {
+        this.photo = photo;
+    }
+
 }
