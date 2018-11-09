@@ -91,8 +91,6 @@ public class MainActivity extends BaseActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        visibleBtn(useDarkTheme);
-
         mViewModel = ViewModelProviders.of(this).get(MainActivityViewModel.class);
 
         mViewModel.getSelectedNavItem().observe(this, this::displayNavigationItem);
@@ -211,14 +209,6 @@ public class MainActivity extends BaseActivity
             case R.id.nav_settings:
                 navigationItem = MainActivityViewModel.NavigationItem.SETTINGS;
                 break;
-            case R.id.toggle_theme:
-                darkTheme(true);
-                navigationItem = MainActivityViewModel.NavigationItem.CONTACTS;
-                break;
-            case R.id.light_theme:
-                darkTheme(false);
-                navigationItem = MainActivityViewModel.NavigationItem.CONTACTS;
-                break;
             default:
                 Timber.e("Failed to resolve selected navigation item id");
                 throw new IllegalArgumentException();
@@ -243,12 +233,6 @@ public class MainActivity extends BaseActivity
             case SETTINGS:
                 startActivity(new Intent(this, SettingsActivity.class));
                 return;
-            case TOGGLE_THEME:
-                darkTheme(true);
-
-                return;
-            case LIGHT_THEME:
-                darkTheme(false);
             default:
                 Timber.e("Failed to resolve selected NavigationItem");
                 throw new IllegalArgumentException();
@@ -385,33 +369,6 @@ public class MainActivity extends BaseActivity
         if (fragment instanceof ContactsFragment) {
             fab.setOnClickListener(view -> startActivity(new Intent(getApplicationContext(), EditContactActivity.class)));
             fab.setImageResource(R.drawable.ic_add_white_24dp);
-        }
-    }
-
-    private void darkTheme(boolean darkTheme) {
-        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
-        editor.putBoolean(PREF_DARK_THEME, darkTheme);
-        editor.apply();
-
-        Intent intent = getIntent();
-        finish();
-
-        startActivity(intent);
-    }
-
-    private void visibleBtn(boolean darkTheme){
-        NavigationView navigationView = findViewById(R.id.nav_view);
-        Menu menu = navigationView.getMenu();
-        MenuItem darkBtn = menu.findItem(R.id.toggle_theme);
-        MenuItem lightBtn = menu.findItem(R.id.light_theme);
-
-        if (darkTheme){
-            darkBtn.setVisible(false);
-            lightBtn.setVisible(true);
-        }
-        else {
-            darkBtn.setVisible(true);
-            lightBtn.setVisible(false);
         }
     }
 
