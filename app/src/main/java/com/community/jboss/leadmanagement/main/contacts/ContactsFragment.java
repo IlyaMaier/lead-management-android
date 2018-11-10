@@ -55,7 +55,7 @@ public class ContactsFragment extends MainFragment implements ContactsAdapter.Ad
             activity.initFab();
         }
 
-        mAdapter = new ContactsAdapter(this);
+        mAdapter = new ContactsAdapter(this,getActivity());
         recyclerView.setAdapter(mAdapter);
 
         textView.setVisibility(View.GONE);
