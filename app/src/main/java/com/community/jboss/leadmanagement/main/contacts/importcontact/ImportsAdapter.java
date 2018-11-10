@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.community.jboss.leadmanagement.R;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
@@ -62,6 +63,7 @@ public class ImportsAdapter extends RecyclerView.Adapter<ImportsAdapter.ViewHold
 
     ImportsAdapter(List<ImportContact> myDataset) {
         mDataset = myDataset;
+        Collections.sort(mDataset, (importContact, t1) -> importContact.getName().compareTo(t1.getName()));
     }
 
     @Override
