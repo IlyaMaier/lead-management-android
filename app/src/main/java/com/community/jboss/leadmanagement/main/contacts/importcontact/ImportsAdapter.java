@@ -1,13 +1,19 @@
 package com.community.jboss.leadmanagement.main.contacts.importcontact;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.community.jboss.leadmanagement.R;
+import com.community.jboss.leadmanagement.data.daos.ContactNumberDao;
+import com.community.jboss.leadmanagement.data.entities.Contact;
+import com.community.jboss.leadmanagement.utils.DbUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,10 +23,11 @@ import butterknife.ButterKnife;
 
 
 
-public class ImportsAdapter extends RecyclerView.Adapter<ImportsAdapter.ViewHolder> {
+public class ImportsAdapter extends RecyclerView.Adapter<ImportsAdapter.ViewHolder> implements Filterable {
     private List<ImportContact> mDataset;
+    private List<ImportContact> spareData;
     List<ImportContact> contactsToImport = new ArrayList<>();
-
+    private Context mContext;
 
     final class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         @BindView(R.id.impContactImg)
@@ -60,8 +67,10 @@ public class ImportsAdapter extends RecyclerView.Adapter<ImportsAdapter.ViewHold
     }
 
 
-    ImportsAdapter(List<ImportContact> myDataset) {
+    ImportsAdapter(List<ImportContact> myDataset, Context context) {
         mDataset = myDataset;
+        spareData = myDataset;
+        mContext = context;
     }
 
     @Override
@@ -85,5 +94,41 @@ public class ImportsAdapter extends RecyclerView.Adapter<ImportsAdapter.ViewHold
     public List<ImportContact> getContactsToImport(){
         return this.contactsToImport;
     }
+
+    @Override
+    public Filter getFilter() {
+        mDataset = spareData;
+        return new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence constraint) {
+                String data = constraint.toString();
+                if(data.isEmpty()){
+                    mDataset = spareData;
+                }
+                List<ImportContact> filteredList = new ArrayList<>();
+                final ContactNumberDao dao = DbUtil.contactNumberDao(mContext);
+
+                for(ImportContact contact: mDataset){
+                    if(contact.getName().toLowerCase().contains(data.toLowerCase())){
+                        filteredList.add(contact);
+                    }
+                    else if (contact.getNumber().contains(data)) {
+                        filteredList.add(contact);
+                    }
+                }
+
+                FilterResults results = new FilterResults();
+                results.values = filteredList;
+                return results;
+            }
+
+            @Override
+            protected void publishResults(CharSequence constraint, FilterResults results) {
+                mDataset = (ArrayList<ImportContact>) results.values;
+                notifyDataSetChanged();
+            }
+        };
+    }
+
 }
 

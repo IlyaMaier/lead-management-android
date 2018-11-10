@@ -12,6 +12,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.SearchView;
+import android.widget.TextView;
 
 import com.community.jboss.leadmanagement.R;
 import com.community.jboss.leadmanagement.data.daos.ContactDao;
@@ -29,10 +32,12 @@ import butterknife.ButterKnife;
 
 import static com.community.jboss.leadmanagement.SettingsActivity.PREF_DARK_THEME;
 
-public class ImportContactActivity extends AppCompatActivity {
+public class ImportContactActivity extends AppCompatActivity implements  SearchView.OnQueryTextListener{
 
     @BindView(R.id.importContactRecycler)
     RecyclerView recyclerView;
+    @BindView(R.id.text_no_result)
+    TextView textView;
 
     ContactDao contactDao;
     ContactNumberDao numberDao;
@@ -56,8 +61,9 @@ public class ImportContactActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
+        textView.setVisibility(View.GONE);
 
-        adapter = new ImportsAdapter(getContacts());
+        adapter = new ImportsAdapter(getContacts(),getApplicationContext());
         recyclerView.setAdapter(adapter);
 
     }
@@ -65,6 +71,37 @@ public class ImportContactActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.import_contact_menu,menu);
+        MenuItem searchMenuItem = menu.findItem(R.id.action_search_import);
+        SearchView searchView = (SearchView) searchMenuItem.getActionView();
+        searchView.setQueryHint(getString(R.string.search));
+        searchView.onActionViewExpanded();
+        searchView.clearFocus();
+        searchView.setSubmitButtonEnabled(false);
+        searchView.setQueryRefinementEnabled(false);
+        searchView.setOnQueryTextListener(this);
+        searchMenuItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem item) {
+                if(item==searchMenuItem){
+                    adapter.getFilter().filter(searchView.getQuery());
+                    if( adapter.getItemCount() == 0){
+                        textView.setVisibility(View.VISIBLE);
+                    } else{
+                        textView.setVisibility(View.GONE);
+                    }
+                }
+                return true;
+            }
+
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem item) {
+                if(item==searchMenuItem){
+                    adapter.getFilter().filter("");
+                    textView.setVisibility(View.GONE);
+                }
+                return true;
+            }
+        });
         return true;
     }
 
@@ -119,6 +156,30 @@ public class ImportContactActivity extends AppCompatActivity {
         return contacts;
     }
 
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        MenuItem item = menu.findItem(R.id.action_search_import);
+        item.setVisible(true);
+        return true;
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String s) {
+        return true;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String s) {
+        adapter.getFilter().filter(s);
+        if (adapter.getItemCount() == 0){
+            textView.setVisibility(View.VISIBLE);
+        }
+        else {
+            textView.setVisibility(View.GONE);
+        }
+        return true;
+    }
 
 }
 
