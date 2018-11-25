@@ -1,51 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/contact_cell_layout"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/group_cell_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <com.mikhaellopez.circularimageview.CircularImageView
-        android:id="@+id/contact_avatar"
+        android:id="@+id/group_avatar"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_marginStart="10dp"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp"
-        android:src="@drawable/ic_launcher_background" />
+        android:src="@drawable/ic_launcher_background"
+        android:transitionName="@string/avatar"
+        tools:targetApi="lollipop" />
 
     <TextView
-        android:id="@+id/contact_name"
+        android:id="@+id/group_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
         android:layout_marginStart="10dp"
         android:layout_marginTop="12.5dp"
-        android:layout_toStartOf="@+id/contact_delete"
-        android:layout_toEndOf="@id/contact_avatar"
+        android:layout_toStartOf="@+id/group_delete"
+        android:layout_toEndOf="@id/group_avatar"
         android:maxLines="1"
-        android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/contact_number"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/contact_name"
-        android:layout_alignBottom="@id/contact_avatar"
-        android:layout_marginStart="10dp"
-        android:layout_toStartOf="@id/contact_delete"
-        android:layout_toEndOf="@id/contact_avatar"
-        android:maxLines="1" />
+        android:textColor="#000000"
+        android:textStyle="bold"
+        android:transitionName="@string/name"
+        tools:targetApi="lollipop" />
 
     <ImageButton
-        android:id="@id/contact_delete"
+        android:id="@id/group_delete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
         android:layout_marginEnd="15dp"
         android:background="@android:color/white"
+        android:contentDescription="@string/delete"
         android:src="@drawable/ic_close_black_24dp"
-        android:visibility="gone"
-        android:contentDescription="@string/delete" />
+        android:visibility="gone" />
 
     <View
         android:layout_width="match_parent"

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".main.groups.editgroup.EditGroupActivity">
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.LightAppBarOverlay">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/group_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/AppTheme.DarkPopupOverlay" />
+
+    </android.support.design.widget.AppBarLayout>
+
+    <com.mikhaellopez.circularimageview.CircularImageView
+        android:id="@+id/group_image"
+        android:layout_width="112dp"
+        android:layout_height="112dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginStart="@dimen/activity_horizontal_margin"
+        android:layout_marginTop="80dp"
+        android:layout_marginEnd="@dimen/activity_horizontal_margin"
+        android:contentDescription="@string/avatar"
+        android:elevation="11dp"
+        android:src="@drawable/redhat"
+        android:transitionName="@string/avatar"
+        tools:targetApi="lollipop" />
+
+    <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/card_groups"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="150dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        card_view:cardCornerRadius="8dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="50dp"
+            android:orientation="vertical">
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="30dp"
+                android:layout_marginEnd="30dp">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/group_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableStart="@drawable/ic_group_red_24dp"
+                    android:drawablePadding="15dp"
+                    android:hint="@string/name"
+                    android:maxLines="1"
+                    android:transitionName="@string/name"
+                    tools:targetApi="lollipop" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rv_groups_edit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:layout_marginBottom="@dimen/activity_vertical_margin" />
+
+        </LinearLayout>
+
+    </android.support.v7.widget.CardView>
+
+</FrameLayout>

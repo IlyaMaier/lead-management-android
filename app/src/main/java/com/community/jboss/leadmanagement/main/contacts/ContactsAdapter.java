@@ -150,7 +150,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
 
             deleteButton.setOnClickListener(v1 -> {
                 CustomDialogBox dialogBox = new CustomDialogBox();
-                dialogBox.showAlert((Activity) mContext,mContact,mAdapter);
+                dialogBox.showAlert((Activity) mContext,mContact,mAdapter,true,null,null);
                 deleteButton.setVisibility(View.INVISIBLE);
             });
         }
@@ -230,7 +230,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
                 notes_hint.setTextColor(Color.WHITE);
 
 
-                txtClose.setBackground(mContext.getResources().getDrawable(R.drawable.ic_close_white));
+                txtClose.setBackground(mContext.getResources().getDrawable(R.drawable.ic_close_white_24dp));
                 helper_email.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_email_white));
                 helper_phone.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_phone_white));
                 helper_adress.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_location_white));
@@ -290,7 +290,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
             deleteButton.setVisibility(newVisibility);
             if(mPref.getBoolean(SettingsActivity.PREF_DARK_THEME,false)){
                 deleteButton.setBackgroundColor(Color.parseColor("#303030"));
-                deleteButton.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_close_white));
+                deleteButton.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_close_white_24dp));
             }
             return true;
         }

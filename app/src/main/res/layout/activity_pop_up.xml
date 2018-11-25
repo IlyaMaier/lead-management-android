@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/popup_activity_layout"
+    android:layout_width="330dp"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:background="@color/colorPopup"
+    android:orientation="vertical"
+    android:padding="10dp"
+    tools:context=".main.groups.PopUpActivity">
+
+    <TextView
+        android:id="@+id/popup_close"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_gravity="end"
+        android:layout_marginEnd="25dp"
+        android:background="@drawable/ic_close_black_24dp"
+        android:gravity="center"
+        android:paddingTop="10dp"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <com.mikhaellopez.circularimageview.CircularImageView
+            android:id="@+id/popup_activity_avatar"
+            android:layout_width="175dp"
+            android:layout_height="175dp"
+            android:layout_gravity="center"
+            android:contentDescription="@string/avatar"
+            android:src="@drawable/redhat"
+            android:transitionName="@string/avatar"
+            tools:targetApi="lollipop" />
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@color/cardview_shadow_end_color">
+
+                <LinearLayout
+                    android:id="@+id/popup_activity_layout2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="10dp">
+
+                    <TextView
+                        android:id="@+id/popup_activity_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:paddingStart="10dp"
+                        android:paddingEnd="0dp"
+                        android:textColor="@android:color/black"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:transitionName="@string/name"
+                        tools:targetApi="lollipop" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginBottom="15dp"
+                        android:baselineAligned="false"
+                        android:gravity="center">
+
+                        <Button
+                            android:id="@+id/popup_activity_edit"
+                            android:layout_width="27dp"
+                            android:layout_height="27dp"
+                            android:background="@drawable/ic_edit_outline"
+                            android:backgroundTint="@color/colorAccent"
+                            tools:targetApi="lollipop" />
+
+                    </LinearLayout>
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/rv_popup_groups"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                </LinearLayout>
+
+            </android.support.v7.widget.CardView>
+
+        </ScrollView>
+
+    </LinearLayout>
+
+</LinearLayout>
