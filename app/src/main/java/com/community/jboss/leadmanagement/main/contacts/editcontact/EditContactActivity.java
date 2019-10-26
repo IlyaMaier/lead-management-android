@@ -224,11 +224,10 @@ public class EditContactActivity extends AppCompatActivity {
     private boolean checkInputs() {
         boolean status = true;
 
-        if (checkEditText(emailField, "Please enter mail")) {
-            if (!emailField.getText().toString().contains("@")) {
-                emailField.setError("Wrong mail formatting");
-                status = false;
-            }
+        if (checkEditText(emailField, "Please enter mail")
+                && (!emailField.getText().toString().contains("@"))) {
+            emailField.setError("Wrong mail formatting");
+            status = false;
         }
 
         if (!checkEditText(contactNumberField, "Please enter mobile number")) {

@@ -1,5 +1,6 @@
 package com.community.jboss.leadmanagement.main.contacts.importcontact;
 
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,7 +37,7 @@ public class ImportsAdapter extends RecyclerView.Adapter<ImportsAdapter.ViewHold
             v.setOnClickListener(this);
         }
 
-        void bind(ImportContact contact) {
+        private void bind(ImportContact contact) {
             this.mContact = contact;
             if (!mContact.isChecked()) {
                 if (!useDarkTheme)
@@ -74,6 +75,7 @@ public class ImportsAdapter extends RecyclerView.Adapter<ImportsAdapter.ViewHold
         this.useDarkTheme = useDarkTheme;
     }
 
+    @NonNull
     @Override
     public ImportsAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext())
@@ -92,7 +94,7 @@ public class ImportsAdapter extends RecyclerView.Adapter<ImportsAdapter.ViewHold
         return mDataset.size();
     }
 
-    public List<ImportContact> getContactsToImport() {
+    List<ImportContact> getContactsToImport() {
         return this.contactsToImport;
     }
 }
