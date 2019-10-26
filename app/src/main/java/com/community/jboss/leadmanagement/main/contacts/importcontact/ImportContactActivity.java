@@ -61,7 +61,7 @@ public class ImportContactActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        adapter = new ImportsAdapter(getContacts(),useDarkTheme);
+        adapter = new ImportsAdapter(getContacts(), useDarkTheme);
         recyclerView.setAdapter(adapter);
 
     }
@@ -84,9 +84,8 @@ public class ImportContactActivity extends AppCompatActivity {
                 for (ImportContact contact : contacts) {
                     String contactUUID = UUID.randomUUID().toString();
                     Contact c = new Contact(contactUUID, contact.getName());
-                    contactDao.insert(c);
                     c.setImage(contact.getPhoto());
-                    contactDao.update(c);
+                    contactDao.insert(c);
                     numberDao.insert(new ContactNumber(contact.getNumber(), contactUUID));
                 }
                 onBackPressed();

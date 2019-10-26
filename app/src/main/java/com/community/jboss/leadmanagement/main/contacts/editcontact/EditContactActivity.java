@@ -64,7 +64,6 @@ public class EditContactActivity extends AppCompatActivity {
 
     private EditContactActivityViewModel mViewModel;
 
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -79,8 +78,6 @@ public class EditContactActivity extends AppCompatActivity {
 
         ButterKnife.bind(this);
 
-        locationField.setHint(Html.fromHtml(getString(R.string.location) + " <small>(optional)</small>", Html.FROM_HTML_MODE_LEGACY));
-
         if (useDarkTheme) {
             setDrawableLeft(locationField, R.drawable.ic_location_white);
             setDrawableLeft(emailField, R.drawable.ic_email_white);
@@ -89,7 +86,6 @@ public class EditContactActivity extends AppCompatActivity {
             setDrawableLeft(queryField, R.drawable.ic_question_white);
             setDrawableLeft(notesField, R.drawable.ic_notes_white);
         }
-
 
         mViewModel = ViewModelProviders.of(this).get(EditContactActivityViewModel.class);
         mViewModel.getContact().observe(this, contact -> {
@@ -134,12 +130,8 @@ public class EditContactActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        contact_logo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivityForResult(new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI), IMAGE_FROM_GALLERY);
-            }
-        });
+        contact_logo.setOnClickListener(v -> startActivityForResult(new Intent(
+                Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI), IMAGE_FROM_GALLERY));
 
     }
 
@@ -152,12 +144,8 @@ public class EditContactActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         final int id = item.getItemId();
-        switch (id) {
-            case R.id.action_save:
-                saveContact();
-                break;
-            default:
-                break;
+        if (id == R.id.action_save) {
+            saveContact();
         }
 
         return super.onOptionsItemSelected(item);
