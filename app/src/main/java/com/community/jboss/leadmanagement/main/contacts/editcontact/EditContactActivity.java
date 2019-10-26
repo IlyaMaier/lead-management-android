@@ -1,7 +1,9 @@
 package com.community.jboss.leadmanagement.main.contacts.editcontact;
 
 import android.app.Activity;
+import android.appwidget.AppWidgetManager;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
@@ -10,6 +12,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
@@ -29,6 +32,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.community.jboss.leadmanagement.R;
 import com.community.jboss.leadmanagement.data.entities.ContactNumber;
+import com.community.jboss.leadmanagement.widgets.RecentContactsProvider;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
@@ -37,7 +41,8 @@ import java.io.IOException;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static com.community.jboss.leadmanagement.SettingsActivity.PREF_DARK_THEME;
+import static com.community.jboss.leadmanagement.SettingsFragment.PREF_DARK_THEME;
+
 
 public class EditContactActivity extends AppCompatActivity {
     public static final String INTENT_EXTRA_CONTACT_NUM = "INTENT_EXTRA_CONTACT_NUM";
@@ -166,6 +171,11 @@ public class EditContactActivity extends AppCompatActivity {
             Toast.makeText(this, "Ragac nitoa", Toast.LENGTH_SHORT).show();
             return;
         }
+
+        // on save / update contact info, update widget too
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
+        int appWidgetIds[] = appWidgetManager.getAppWidgetIds(new ComponentName(this, RecentContactsProvider.class));
+        appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.words);
 
         final String name = contactNameField.getText().toString();
         final String location = locationField.getText().toString();

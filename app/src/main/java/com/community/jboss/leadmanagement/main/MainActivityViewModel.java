@@ -19,8 +19,7 @@ public class MainActivityViewModel extends ViewModel {
     enum NavigationItem {
         CONTACTS,
         GROUPS,
-        SETTINGS,
-        TOGGLE_THEME,
-        LIGHT_THEME
+        RECORDEDCALLS,
+        SETTINGS
     }
 }
