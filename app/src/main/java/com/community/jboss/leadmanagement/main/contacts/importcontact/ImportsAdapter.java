@@ -94,7 +94,7 @@ public class ImportsAdapter extends RecyclerView.Adapter<ImportsAdapter.ViewHold
         return mDataset.size();
     }
 
-    List<ImportContact> getContactsToImport() {
+    public List<ImportContact> getContactsToImport() {
         return this.contactsToImport;
     }
 }
