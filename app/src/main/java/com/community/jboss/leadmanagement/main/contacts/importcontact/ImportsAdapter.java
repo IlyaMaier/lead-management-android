@@ -1,5 +1,6 @@
 package com.community.jboss.leadmanagement.main.contacts.importcontact;
 
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,12 +16,10 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-
-
 public class ImportsAdapter extends RecyclerView.Adapter<ImportsAdapter.ViewHolder> {
     private List<ImportContact> mDataset;
-    List<ImportContact> contactsToImport = new ArrayList<>();
-
+    private List<ImportContact> contactsToImport = new ArrayList<>();
+    private boolean useDarkTheme;
 
     final class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         @BindView(R.id.impContactImg)
@@ -34,36 +33,49 @@ public class ImportsAdapter extends RecyclerView.Adapter<ImportsAdapter.ViewHold
 
         ViewHolder(View v) {
             super(v);
-            ButterKnife.bind(this,v);
+            ButterKnife.bind(this, v);
             v.setOnClickListener(this);
         }
 
-        void bind(ImportContact contact){
+        private void bind(ImportContact contact) {
             this.mContact = contact;
+            if (!mContact.isChecked()) {
+                if (!useDarkTheme)
+                    contactImg.setBackgroundResource(R.drawable.ic_unchecked_24dp);
+                else contactImg.setBackgroundResource(R.drawable.ic_unchecked_24dp_night);
+            } else {
+                if (!useDarkTheme)
+                    contactImg.setBackgroundResource(R.drawable.ic_checked_24dp);
+                else contactImg.setBackgroundResource(R.drawable.ic_checked_24dp_night);
+            }
             name.setText(contact.getName());
             number.setText(contact.getNumber());
         }
 
-
         @Override
         public void onClick(View v) {
-            if(mContact.isChecked()){
+            if (mContact.isChecked()) {
                 contactsToImport.remove(mContact);
                 mContact.setChecked(false);
-                contactImg.setBackgroundResource(R.drawable.ic_unchecked_24dp);
-            }else{
+                if (!useDarkTheme)
+                    contactImg.setBackgroundResource(R.drawable.ic_unchecked_24dp);
+                else contactImg.setBackgroundResource(R.drawable.ic_unchecked_24dp_night);
+            } else {
                 contactsToImport.add(mContact);
                 mContact.setChecked(true);
-                contactImg.setBackgroundResource(R.drawable.ic_checked_24dp);
+                if (!useDarkTheme)
+                    contactImg.setBackgroundResource(R.drawable.ic_checked_24dp);
+                else contactImg.setBackgroundResource(R.drawable.ic_checked_24dp_night);
             }
         }
     }
 
-
-    ImportsAdapter(List<ImportContact> myDataset) {
+    ImportsAdapter(List<ImportContact> myDataset, boolean useDarkTheme) {
         mDataset = myDataset;
+        this.useDarkTheme = useDarkTheme;
     }
 
+    @NonNull
     @Override
     public ImportsAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext())
@@ -82,8 +94,7 @@ public class ImportsAdapter extends RecyclerView.Adapter<ImportsAdapter.ViewHold
         return mDataset.size();
     }
 
-    public List<ImportContact> getContactsToImport(){
+    public List<ImportContact> getContactsToImport() {
         return this.contactsToImport;
     }
 }
-
